@@ -1,0 +1,463 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-gray-200; }
+  body { @apply bg-glass-subtle text-ink-secondary font-sans antialiased; }
+  h1, h2, h3, h4, h5, h6 { @apply text-ink-primary; }
+  ::selection { background-color: rgba(255, 107, 53, 0.20); color: #FF6B35; }
+  .dark ::selection { background-color: rgba(255, 138, 92, 0.30); color: #FF8A5C; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); }
+}
+
+/* ========== Apple 风格细滚动条 ========== */
+.apple-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+.apple-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.apple-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.apple-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+.apple-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+.dark .apple-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5);
+}
+.dark .apple-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.8);
+}
+
+/* ========== 纹理 ========== */
+.texture-paper {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+}
+.texture-dots {
+  background-image: radial-gradient(circle at 1px 1px, var(--border-default) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+/* 地图等高线纹理 — 用于 Hero 与 Footer 装饰 */
+.texture-contour {
+  background-image: url("data:image/svg+xml,%3Csvg width='600' height='600' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2386868B' stroke-width='0.5' opacity='0.10'%3E%3Cpath d='M0,300 Q150,200 300,300 T600,300'/%3E%3Cpath d='M0,330 Q150,230 300,330 T600,330'/%3E%3Cpath d='M0,360 Q150,260 300,360 T600,360'/%3E%3Cpath d='M0,270 Q150,170 300,270 T600,270'/%3E%3Cpath d='M0,240 Q150,140 300,240 T600,240'/%3E%3Cpath d='M0,390 Q150,290 300,390 T600,390'/%3E%3Cpath d='M0,420 Q150,320 300,420 T600,420'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 600px 600px;
+}
+
+/* ========== 渐变光晕 ========== */
+.glow-accent {
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-glow), transparent 70%);
+}
+.glow-gold {
+  background: radial-gradient(ellipse 40% 40% at 85% 30%, rgba(0, 0, 0, 0.03), transparent 70%);
+}
+.glow-coral {
+  background: radial-gradient(ellipse 50% 40% at 50% 100%, rgba(0, 0, 0, 0.02), transparent 70%);
+}
+
+/* ========== 毛玻璃 ========== */
+.glass-navbar {
+  @apply backdrop-blur-[24px] saturate-[180%];
+  background-color: rgba(255, 255, 255, 0.72);
+  border-bottom: 1px solid var(--glass-border);
+}
+.dark .glass-navbar {
+  background-color: rgba(18, 18, 20, 0.78);
+  border-bottom: 1px solid var(--glass-border);
+}
+.glass-panel {
+  @apply backdrop-blur-[20px] saturate-[160%];
+  background-color: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--glass-border);
+}
+.dark .glass-panel {
+  background-color: rgba(28, 28, 30, 0.72);
+  border: 1px solid var(--glass-border);
+}
+
+/* ========== 骨架 ========== */
+.skeleton { @apply animate-pulse rounded-md; background-color: var(--gray-200); }
+
+/* ========== 滚动浮入 ========== */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ========== 文字渐变 ========== */
+.text-gradient {
+  background: linear-gradient(120deg, #1D1D1F 0%, #FF6B35 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.dark .text-gradient {
+  background: linear-gradient(120deg, #F5F5F7 0%, #FF8A5C 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* ========== 装饰线 ========== */
+.ornament-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--gray-300) 50%, transparent 100%);
+}
+.route-dashed {
+  background-image: repeating-linear-gradient(90deg, var(--accent-primary) 0, var(--accent-primary) 6px, transparent 6px, transparent 14px);
+  height: 2px; opacity: 0.3;
+}
+
+/* ========== 3D 工具类 ========== */
+.perspective-1200 { perspective: 1200px; }
+.perspective-1400 { perspective: 1400px; }
+.perspective-2000 { perspective: 2000px; }
+.preserve-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+.translate-z-0 { transform: translateZ(0); }
+.translate-z-50 { transform: translateZ(50px); }
+.translate-z-100 { transform: translateZ(100px); }
+.translate-z-neg-100 { transform: translateZ(-100px); }
+.translate-z-neg-200 { transform: translateZ(-200px); }
+
+/* ========== Polaroid 卡片纹理 ========== */
+.polaroid-shadow {
+  box-shadow:
+    0 1px 1px rgba(26, 46, 42, 0.04),
+    0 4px 8px rgba(26, 46, 42, 0.08),
+    0 12px 24px rgba(26, 46, 42, 0.10),
+    0 24px 48px rgba(26, 46, 42, 0.12);
+}
+.dark .polaroid-shadow {
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.30),
+    0 4px 8px rgba(0, 0, 0, 0.35),
+    0 12px 24px rgba(0, 0, 0, 0.40),
+    0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+/* ========== prose-chat 保持不变 ========== */
+.prose-chat { color: var(--ink-secondary); }
+.prose-chat p { margin-bottom: 8px; line-height: 1.65; }
+.prose-chat p:last-child { margin-bottom: 0; }
+.prose-chat strong { font-weight: 600; color: var(--ink-primary); }
+.prose-chat a { color: var(--accent-primary); text-decoration: underline; text-underline-offset: 2px; }
+.prose-chat blockquote { border-left: 3px solid var(--accent-primary); background: var(--accent-muted); padding: 8px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ============================================
+   Apple Liquid Glass — 全局主题
+   ============================================ */
+@layer base {
+  :root {
+    /* Glass surfaces */
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-bg-strong: rgba(255, 255, 255, 0.88);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-border-dark: rgba(0, 0, 0, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    /* Apple gray ramp */
+    --gray-50: #F5F5F7;
+    --gray-100: #E8E8ED;
+    --gray-200: #D2D2D7;
+    --gray-300: #B0B0B5;
+    --gray-400: #86868B;
+    --gray-500: #6E6E73;
+    --gray-600: #424245;
+    --gray-700: #1D1D1F;
+    --gray-900: #000000;
+
+    /* Apple azure — single accent */
+    --azure: #0071E3;
+    --azure-hover: #0077ED;
+    --azure-muted: rgba(0, 113, 227, 0.10);
+
+    /* Status (use sparingly) */
+    --coral-warn: #FF6B35;
+    --coral-warn-muted: rgba(255, 107, 53, 0.12);
+    --amber-caution: #FF9F0A;
+    --amber-caution-muted: rgba(255, 159, 10, 0.12);
+    --mint-ok: #30D158;
+    --mint-ok-muted: rgba(48, 209, 88, 0.12);
+
+    /* === Apple neutral surfaces (pure white / gray, NOT cream) === */
+    --surface-canvas: #FFFFFF;
+    --surface-elevated: #FFFFFF;
+    --surface-muted: #F5F5F7;
+    --surface-sunken: #E8E8ED;
+
+    /* === Apple neutral ink ramp (pure black / gray, NOT brown) === */
+    --ink-primary: #1D1D1F;
+    --ink-secondary: #424245;
+    --ink-tertiary: #6E6E73;
+    --ink-quaternary: #86868B;
+
+    /* === Brand accent — #FF6B35 only for buttons & small accents === */
+    --accent-primary: #FF6B35;
+    --accent-hover: #E55525;
+    --accent-muted: rgba(255, 107, 53, 0.10);
+    --accent-glow: rgba(255, 107, 53, 0.20);
+
+    /* === Azure aliases to brand accent (used sparingly for buttons/accents) === */
+    --azure: #FF6B35;
+    --azure-hover: #E55525;
+    --azure-muted: rgba(255, 107, 53, 0.08);
+
+    /* === Neutral borders (gray, NOT orange-tinted) === */
+    --border-default: rgba(0, 0, 0, 0.08);
+    --border-light: rgba(0, 0, 0, 0.04);
+    --border-strong: rgba(0, 0, 0, 0.12);
+
+    /* === Gold / coral aliases to brand accent (backward compat) === */
+    --gold: #FF6B35;
+    --gold-light: #FF8A5C;
+    --gold-muted: rgba(255, 107, 53, 0.08);
+    --coral: #FF6B35;
+    --coral-light: #FF8A5C;
+    --coral-muted: rgba(255, 107, 53, 0.08);
+
+    /* === Status === */
+    --danger: #E5484D;
+    --warning: #FF9F0A;
+    --success: #30D158;
+    --info: #FF6B35;
+  }
+
+  .dark {
+    --glass-bg: rgba(28, 28, 30, 0.72);
+    --glass-bg-strong: rgba(44, 44, 46, 0.88);
+    --glass-bg-subtle: rgba(18, 18, 20, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --glass-border-dark: rgba(0, 0, 0, 0.40);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.50), 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    --gray-50: #1C1C1E;
+    --gray-100: #2C2C2E;
+    --gray-200: #3A3A3C;
+    --gray-300: #48484A;
+    --gray-400: #636366;
+    --gray-500: #8E8E93;
+    --gray-600: #AEAEB2;
+    --gray-700: #C7C7CC;
+    --gray-900: #FFFFFF;
+
+    --azure: #FF8A5C;
+    --azure-hover: #FFA07A;
+    --azure-muted: rgba(255, 138, 92, 0.15);
+
+    --coral-warn: #FF9F0A;
+    --coral-warn-muted: rgba(255, 159, 10, 0.18);
+    --amber-caution: #FFD60A;
+    --amber-caution-muted: rgba(255, 214, 10, 0.18);
+    --mint-ok: #30D158;
+    --mint-ok-muted: rgba(48, 209, 88, 0.18);
+
+    /* Apple neutral dark surfaces (pure dark gray, NOT warm brown) */
+    --surface-canvas: #000000;
+    --surface-elevated: #1C1C1E;
+    --surface-muted: #2C2C2E;
+    --surface-sunken: #000000;
+
+    --ink-primary: #F5F5F7;
+    --ink-secondary: #C7C7CC;
+    --ink-tertiary: #8E8E93;
+    --ink-quaternary: #636366;
+
+    --accent-primary: #FF8A5C;
+    --accent-hover: #FFA07A;
+    --accent-muted: rgba(255, 138, 92, 0.15);
+    --accent-glow: rgba(255, 138, 92, 0.30);
+
+    --border-default: rgba(255, 255, 255, 0.10);
+    --border-light: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.15);
+
+    --gold: #FF8A5C;
+    --gold-light: #FFA07A;
+    --gold-muted: rgba(255, 138, 92, 0.15);
+    --coral: #FF8A5C;
+    --coral-light: #FFA07A;
+    --coral-muted: rgba(255, 138, 92, 0.15);
+
+    --danger: #FF6B6B;
+    --warning: #FFD60A;
+    --success: #30D158;
+    --info: #FF8A5C;
+  }
+}
+
+/* ========== Glass utilities ========== */
+.glass {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+.glass-strong {
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+.glass-subtle {
+  background-color: var(--glass-bg-subtle);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid var(--glass-border);
+}
+.glass-hover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Apple-style background: clean white with subtle neutral gradient */
+.apple-bg {
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 0%, rgba(0, 0, 0, 0.02), transparent 60%),
+    linear-gradient(180deg, #FFFFFF 0%, #F5F5F7 100%);
+  background-attachment: fixed;
+}
+.dark .apple-bg {
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 0%, rgba(255, 255, 255, 0.03), transparent 60%),
+    linear-gradient(180deg, #000000 0%, #1C1C1E 100%);
+  background-attachment: fixed;
+}
+
+/* Apple-style divider */
+.apple-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gray-200), transparent);
+}
+
+/* Apple-style pill button */
+.apple-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 980px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-pill-primary {
+  background: var(--accent-primary);
+  color: white;
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.30);
+}
+.apple-pill-primary:hover { background: var(--accent-hover); }
+.apple-pill-glass {
+  background: var(--glass-bg-subtle);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--gray-700);
+}
+.apple-pill-glass:hover { background: var(--glass-bg); }
+
+/* ========== 天气 Hero 动画（纯 CSS，GPU 加速） ========== */
+/* 用 CSS 动画替代 Framer Motion JS 动画，避免主线程卡顿 */
+@keyframes weather-sun-rotate {
+  from { transform: translateZ(0) rotate(0deg); }
+  to { transform: translateZ(0) rotate(360deg); }
+}
+@keyframes weather-sun-rotate-reverse {
+  from { transform: translateZ(0) rotate(0deg); }
+  to { transform: translateZ(0) rotate(-360deg); }
+}
+@keyframes weather-rain-fall {
+  0% { transform: translate3d(0, -20px, 0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate3d(0, 120px, 0); opacity: 0; }
+}
+@keyframes weather-snow-fall {
+  0% { transform: translate3d(0, -10px, 0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate3d(var(--snow-x, 0), 140px, 0); opacity: 0; }
+}
+@keyframes weather-cloud-drift-right {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(220px, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes weather-cloud-drift-left {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-160px, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+.weather-anim-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+.weather-anim-sun-ring {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+  transform: translateZ(0);
+  animation: weather-sun-rotate 24s linear infinite;
+}
+.weather-anim-sun-ring-2 {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+  transform: translateZ(0);
+  animation: weather-sun-rotate-reverse 36s linear infinite;
+}
+.weather-anim-rain {
+  position: absolute;
+  width: 2px;
+  border-radius: 9999px;
+  background: rgba(147, 197, 253, 0.6);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  animation-name: weather-rain-fall;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+}
+.weather-anim-snow {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  animation-name: weather-snow-fall;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+}
+.weather-anim-cloud {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.4);
+  filter: blur(8px);
+  will-change: transform;
+  transform: translateZ(0);
+}
+.weather-anim-cloud-right {
+  animation: weather-cloud-drift-right 18s ease-in-out infinite;
+}
+.weather-anim-cloud-left {
+  animation: weather-cloud-drift-left 22s ease-in-out infinite;
+}

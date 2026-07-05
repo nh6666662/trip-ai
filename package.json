@@ -1,0 +1,24 @@
+{
+  "name": "trip-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-driven intelligent travel planning platform — TripAI",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "clean": "turbo clean",
+    "db:migrate": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > apps/web/src/types/database.ts"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅智 TripAI — 让 AI 为你规划完美旅程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ========== 设计令牌：陶土 + 墨绿 + 米白，编辑式旅行杂志美学 ========== */
+  :root {
+    --paper: #F1E9DB;        /* 暖米白纸张 */
+    --paper-2: #E6DBC6;      /* 深米色 */
+    --cream: #FAF4E8;        /* 亮米白卡片 */
+    --ink: #221912;          /* 深褐墨色 */
+    --ink-2: #5C4A3A;        /* 中褐 */
+    --ink-3: #8A7560;        /* 浅褐 */
+    --forest: #1B3528;       /* 深墨绿 */
+    --forest-2: #2D5440;     /* 中墨绿 */
+    --terra: #C9622E;        /* 陶土赭石 */
+    --terra-2: #9D4A1A;      /* 深陶土 */
+    --sand: #D4A574;         /* 金沙 */
+    --rust: #8B3A1A;         /* 锈红 */
+    --line: rgba(34, 25, 18, 0.14);
+    --shadow: 0 30px 60px -20px rgba(34, 25, 18, 0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 纸质纹理 + 等高线背景 */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(201, 98, 46, 0.08), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 30%, rgba(27, 53, 40, 0.07), transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23221912' stroke-width='0.5' opacity='0.05'%3E%3Cpath d='M0 100 Q50 60 100 100 T200 100'/%3E%3Cpath d='M0 120 Q50 80 100 120 T200 120'/%3E%3Cpath d='M0 80 Q50 40 100 80 T200 80'/%3E%3Cpath d='M0 60 Q50 20 100 60 T200 60'/%3E%3Ccircle cx='100' cy='100' r='40'/%3E%3Ccircle cx='100' cy='100' r='60'/%3E%3Ccircle cx='100' cy='100' r='80'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ========== 顶部导航 ========== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(241, 233, 219, 0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px;
+    color: var(--ink); text-decoration: none;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--forest); color: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+    box-shadow: 0 4px 12px rgba(27, 53, 40, 0.3);
+  }
+  .nav-meta { display: flex; align-items: center; gap: 20px; }
+  .nav-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3); padding: 4px 10px;
+    border: 1px solid var(--line); border-radius: 20px;
+  }
+  .nav-cta {
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--cream); background: var(--ink); text-decoration: none;
+    padding: 8px 18px; border-radius: 6px;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .nav-cta:hover { background: var(--terra); transform: translateY(-1px); }
+
+  /* ========== HERO 区：杂志封面式 ========== */
+  .hero {
+    min-height: 100vh; padding: 140px 0 80px;
+    display: flex; align-items: center; position: relative;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 60px; align-items: center;
+  }
+  .hero-issue {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.8s 0.1s ease-out forwards;
+  }
+  .issue-line { width: 60px; height: 1px; background: var(--terra); }
+  .issue-text {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--terra);
+  }
+  .hero-title {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(48px, 7vw, 92px); line-height: 0.96;
+    color: var(--ink); letter-spacing: -0.02em;
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 1s 0.25s ease-out forwards;
+  }
+  .hero-title em {
+    font-style: italic; font-weight: 400; color: var(--terra);
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+    position: relative;
+  }
+  .hero-title em::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 8px; height: 14px;
+    background: rgba(212, 165, 116, 0.4); z-index: -1; border-radius: 2px;
+  }
+  .hero-sub {
+    font-size: 18px; line-height: 1.7; color: var(--ink-2);
+    max-width: 540px; margin-bottom: 40px;
+    opacity: 0; animation: fadeUp 1s 0.4s ease-out forwards;
+  }
+  .hero-actions { display: flex; gap: 16px; align-items: center;
+    opacity: 0; animation: fadeUp 1s 0.55s ease-out forwards; }
+  .btn-primary {
+    font-family: 'DM Sans'; font-size: 15px; font-weight: 600;
+    background: var(--forest); color: var(--cream); text-decoration: none;
+    padding: 14px 28px; border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 10px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 24px -8px rgba(27, 53, 40, 0.5);
+  }
+  .btn-primary:hover { background: var(--terra); transform: translateY(-2px); box-shadow: 0 12px 32px -8px rgba(201, 98, 46, 0.6); }
+  .btn-arrow { transition: transform 0.25s; }
+  .btn-primary:hover .btn-arrow { transform: translateX(4px); }
+  .btn-ghost {
+    font-family: 'DM Sans'; font-size: 15px; font-weight: 500;
+    color: var(--ink); text-decoration: none;
+    padding: 14px 8px; border-bottom: 1px solid var(--ink);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--terra); border-color: var(--terra); }
+
+  /* HERO 右侧：邮票/票根装饰 */
+  .hero-visual {
+    position: relative; aspect-ratio: 3/4;
+    opacity: 0; animation: fadeIn 1.2s 0.6s ease-out forwards;
+  }
+  .stamp {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%);
+    border-radius: 4px; overflow: hidden;
+    box-shadow: var(--shadow);
+    transform: rotate(2deg);
+  }
+  .stamp::before, .stamp::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 16px;
+    background-image: radial-gradient(circle at 8px 8px, var(--paper) 4px, transparent 4.5px);
+    background-size: 16px 16px; background-repeat: repeat-x;
+  }
+  .stamp::before { top: -8px; }
+  .stamp::after { bottom: -8px; transform: rotate(180deg); }
+  .stamp-inner {
+    position: absolute; inset: 24px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: var(--cream); padding: 28px;
+  }
+  .stamp-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7;
+  }
+  .stamp-compass {
+    width: 120px; height: 120px; margin: 0 auto;
+    animation: spin 60s linear infinite;
+  }
+  .stamp-name {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 32px; line-height: 1.1; text-align: center;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .stamp-bottom {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; opacity: 0.7;
+  }
+  .stamp-barcode {
+    display: flex; gap: 2px; align-items: flex-end; height: 24px;
+  }
+  .stamp-barcode span {
+    display: block; width: 2px; background: var(--cream);
+  }
+
+  /* 邮戳印章 */
+  .postmark {
+    position: absolute; top: -20px; right: -20px;
+    width: 110px; height: 110px; border-radius: 50%;
+    border: 2px solid var(--terra); color: var(--terra);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    transform: rotate(-12deg); opacity: 0.85;
+    background: rgba(241, 233, 219, 0.4);
+  }
+  .postmark::before {
+    content: ''; position: absolute; inset: 6px; border-radius: 50%;
+    border: 1px dashed var(--terra);
+  }
+  .postmark-big {
+    font-family: 'Fraunces', serif; font-size: 26px; font-weight: 400;
+    font-style: italic; letter-spacing: 0; margin: 2px 0;
+    font-variation-settings: 'SOFT' 100;
+  }
+
+  /* ========== 章节通用 ========== */
+  section { padding: 100px 0; position: relative; }
+  .section-head { margin-bottom: 64px; }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.2em; color: var(--terra); margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .section-num::before {
+    content: ''; width: 36px; height: 1px; background: var(--terra);
+  }
+  .section-title {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px); line-height: 1.05;
+    letter-spacing: -0.02em; color: var(--ink);
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+    max-width: 760px;
+  }
+  .section-title em {
+    font-style: italic; color: var(--terra);
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+  }
+
+  /* ========== 创意介绍区：双栏编辑式 ========== */
+  .intro-grid {
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px;
+    align-items: start;
+  }
+  .intro-side {
+    position: sticky; top: 100px;
+  }
+  .intro-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 16px;
+  }
+  .intro-name {
+    font-family: 'Fraunces', serif; font-weight: 400;
+    font-size: 42px; line-height: 1.05; color: var(--forest);
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+    margin-bottom: 20px;
+  }
+  .intro-tagline {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 19px; line-height: 1.5; color: var(--terra);
+    padding-left: 18px; border-left: 2px solid var(--terra);
+    margin-bottom: 28px;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .intro-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; background: var(--cream); border: 1px solid var(--line);
+    border-radius: 30px; font-size: 13px; color: var(--ink-2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .intro-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--terra); }
+
+  .intro-body p {
+    font-size: 17px; line-height: 1.8; color: var(--ink-2);
+    margin-bottom: 24px;
+  }
+  .intro-body p strong { color: var(--ink); font-weight: 600; }
+  .intro-body .lead {
+    font-family: 'Fraunces', serif; font-size: 22px; line-height: 1.5;
+    color: var(--ink); font-weight: 300; margin-bottom: 32px;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .intro-body .lead em {
+    font-style: italic; color: var(--terra);
+  }
+  .intro-quote {
+    background: var(--cream); padding: 32px 36px; border-radius: 8px;
+    border-left: 3px solid var(--terra); margin: 32px 0;
+    position: relative;
+  }
+  .intro-quote::before {
+    content: '"'; position: absolute; top: -8px; left: 20px;
+    font-family: 'Fraunces', serif; font-size: 80px; color: var(--terra);
+    opacity: 0.3; line-height: 1; font-style: italic;
+  }
+  .intro-quote p {
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 18px;
+    line-height: 1.6; color: var(--ink); margin-bottom: 12px;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .intro-quote cite {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--ink-3); font-style: normal; letter-spacing: 0.1em;
+  }
+
+  /* ========== 痛点对比表：三层减负 ========== */
+  .pain-section { background: var(--forest); color: var(--cream); position: relative; overflow: hidden; }
+  .pain-section::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cg fill='none' stroke='%23FAF4E8' stroke-width='0.4' opacity='0.06'%3E%3Ccircle cx='50' cy='50' r='20'/%3E%3Ccircle cx='50' cy='50' r='35'/%3E%3Ccircle cx='50' cy='50' r='48'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .pain-section .section-title { color: var(--cream); }
+  .pain-section .section-num { color: var(--sand); }
+  .pain-section .section-num::before { background: var(--sand); }
+  .pain-section .section-title em { color: var(--sand); }
+
+  .pain-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    margin-top: 48px;
+  }
+  .pain-card {
+    background: rgba(250, 244, 232, 0.06);
+    border: 1px solid rgba(250, 244, 232, 0.12);
+    border-radius: 12px; padding: 36px 28px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative; overflow: hidden;
+  }
+  .pain-card:hover {
+    background: rgba(250, 244, 232, 0.1);
+    transform: translateY(-6px);
+    border-color: var(--sand);
+  }
+  .pain-card-num {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 56px; line-height: 1; color: var(--sand); opacity: 0.4;
+    font-variation-settings: 'SOFT' 100;
+    margin-bottom: 20px;
+  }
+  .pain-card-layer {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--sand);
+    margin-bottom: 14px;
+  }
+  .pain-card-title {
+    font-family: 'Fraunces', serif; font-weight: 400; font-size: 22px;
+    line-height: 1.3; margin-bottom: 20px;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .pain-compare { display: flex; flex-direction: column; gap: 14px; }
+  .pain-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 14px; line-height: 1.5;
+  }
+  .pain-row-tag {
+    flex-shrink: 0; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; padding: 3px 8px; border-radius: 4px;
+    font-weight: 600;
+  }
+  .pain-row-before {
+    background: rgba(139, 58, 26, 0.3); color: #F5C9B5;
+  }
+  .pain-row-after {
+    background: rgba(212, 165, 116, 0.25); color: var(--sand);
+  }
+  .pain-row-text { color: rgba(250, 244, 232, 0.85); }
+
+  .pain-note {
+    margin-top: 48px; padding: 28px 32px;
+    background: rgba(201, 98, 46, 0.15);
+    border: 1px solid rgba(201, 98, 46, 0.3);
+    border-radius: 10px;
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .pain-note-icon {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+    background: var(--terra); display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 22px;
+    color: var(--cream);
+  }
+  .pain-note-text { font-size: 15px; line-height: 1.65; color: rgba(250, 244, 232, 0.9); }
+  .pain-note-text strong { color: var(--sand); font-weight: 600; }
+
+  /* ========== 价值与意义：数据可视化 ========== */
+  .value-section { background: var(--paper); }
+  .value-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    margin: 60px 0;
+  }
+  .stat-card {
+    text-align: center; padding: 40px 20px;
+    border: 1px solid var(--line); border-radius: 12px;
+    background: var(--cream);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--terra), var(--sand));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .stat-card:hover::before { transform: scaleX(1); }
+  .stat-num {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 72px;
+    line-height: 1; color: var(--terra); letter-spacing: -0.03em;
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+    margin-bottom: 12px;
+  }
+  .stat-unit { font-size: 32px; color: var(--ink-2); }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .stat-desc { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+
+  .value-body {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    margin-top: 60px;
+  }
+  .value-block h3 {
+    font-family: 'Fraunces', serif; font-weight: 400; font-size: 26px;
+    color: var(--forest); margin-bottom: 16px;
+    font-variation-settings: 'SOFT' 100;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .value-block h3 .v-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--paper-2); display: flex; align-items: center; justify-content: center;
+    color: var(--terra);
+  }
+  .value-block p { font-size: 15px; line-height: 1.75; color: var(--ink-2); }
+  .value-block p strong { color: var(--ink); }
+
+  /* ========== 功能矩阵 ========== */
+  .feat-section { background: var(--cream); }
+  .feat-grid {
+    display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px;
+    margin-top: 56px;
+  }
+  .feat {
+    border-radius: 14px; padding: 32px;
+    border: 1px solid var(--line); background: var(--paper);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative; overflow: hidden;
+  }
+  .feat:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--terra); }
+  .feat-large { grid-column: span 7; min-height: 280px;
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-2) 100%);
+    color: var(--cream); border-color: transparent;
+  }
+  .feat-large:hover { border-color: var(--sand); }
+  .feat-small { grid-column: span 5; }
+  .feat-third { grid-column: span 4; }
+
+  .feat-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .feat-large .feat-icon { background: rgba(212, 165, 116, 0.2); color: var(--sand); }
+  .feat:not(.feat-large) .feat-icon { background: var(--paper-2); color: var(--terra); }
+  .feat-title {
+    font-family: 'Fraunces', serif; font-weight: 400; font-size: 22px;
+    margin-bottom: 10px; line-height: 1.2;
+    font-variation-settings: 'SOFT' 100;
+  }
+  .feat-large .feat-title { color: var(--cream); font-size: 28px; }
+  .feat-desc { font-size: 14px; line-height: 1.65; color: var(--ink-2); }
+  .feat-large .feat-desc { color: rgba(250, 244, 232, 0.85); font-size: 15px; }
+
+  .feat-tag {
+    position: absolute; top: 24px; right: 24px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .feat-large .feat-tag { background: rgba(212, 165, 116, 0.2); color: var(--sand); }
+  .feat:not(.feat-large) .feat-tag { background: var(--paper-2); color: var(--ink-3); }
+
+  /* ========== CTA 区 ========== */
+  .cta {
+    padding: 120px 0; text-align: center; position: relative; overflow: hidden;
+    background: var(--ink);
+  }
+  .cta::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(201, 98, 46, 0.3), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 0%, rgba(212, 165, 116, 0.15), transparent 60%);
+  }
+  .cta-inner { position: relative; z-index: 1; }
+  .cta-mark {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--sand);
+    margin-bottom: 24px;
+  }
+  .cta-title {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(40px, 6vw, 68px);
+    line-height: 1.05; color: var(--cream); margin-bottom: 24px;
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+    letter-spacing: -0.02em;
+  }
+  .cta-title em {
+    font-style: italic; color: var(--terra);
+    font-variation-settings: 'SOFT' 100, 'opsz' 144;
+  }
+  .cta-sub { font-size: 17px; color: rgba(250, 244, 232, 0.7); margin-bottom: 40px; max-width: 560px; margin-left: auto; margin-right: auto; }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: 'DM Sans'; font-size: 16px; font-weight: 600;
+    background: var(--terra); color: var(--cream); text-decoration: none;
+    padding: 16px 36px; border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 12px 32px -8px rgba(201, 98, 46, 0.6);
+  }
+  .cta-btn:hover { background: var(--sand); color: var(--ink); transform: translateY(-2px); }
+
+  /* ========== 页脚 ========== */
+  footer { background: var(--ink); padding: 40px 0; color: rgba(250, 244, 232, 0.5); }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; }
+
+  /* ========== 动画 ========== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ========== 响应式 ========== */
+  @media (max-width: 900px) {
+    .hero-grid, .intro-grid, .value-body { grid-template-columns: 1fr; gap: 40px; }
+    .hero-visual { max-width: 320px; margin: 0 auto; }
+    .pain-grid, .value-stats { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .feat-large, .feat-small, .feat-third { grid-column: span 1; }
+    .intro-side { position: static; }
+    .nav-meta { gap: 12px; }
+    .nav-tag { display: none; }
+    section { padding: 70px 0; }
+    .container { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">旅</span>
+      <span>旅智 TripAI</span>
+    </a>
+    <div class="nav-meta">
+      <span class="nav-tag">生活方式赛道</span>
+      <a href="#intro" class="nav-cta">查看项目</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO 区：杂志封面 -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-issue">
+          <span class="issue-line"></span>
+          <span class="issue-text">VOL.01 · 2026 · 生活方式赛道</span>
+        </div>
+        <h1 class="hero-title">
+          让 AI 为你<br>
+          规划 <em>完美旅程</em>
+        </h1>
+        <p class="hero-sub">
+          一个 AI 驱动的智能旅行规划平台。输入目的地与偏好，AI 一键生成行程；天气、人流、交通实时预警，自动推荐替代方案；社区用户回流真实体验，让模型越用越聪明。解决规划难、变化多、信息滞后三大旅行痛点。
+        </p>
+        <div class="hero-actions">
+          <a href="#intro" class="btn-primary">
+            探索项目
+            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#features" class="btn-ghost">核心能力</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="stamp">
+          <div class="stamp-inner">
+            <div class="stamp-top">
+              <span>FROM 成都</span>
+              <span>2026</span>
+            </div>
+            <div>
+              <svg class="stamp-compass" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1.2" style="color: var(--sand); opacity: 0.7;">
+                <circle cx="60" cy="60" r="55"/>
+                <circle cx="60" cy="60" r="42"/>
+                <path d="M60 10 L66 60 L60 50 L54 60 Z" fill="currentColor"/>
+                <path d="M60 110 L54 60 L60 70 L66 60 Z" fill="currentColor" opacity="0.4"/>
+                <text x="60" y="8" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="currentColor">N</text>
+                <text x="60" y="118" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="currentColor">S</text>
+                <text x="4" y="63" font-size="9" font-family="JetBrains Mono" fill="currentColor">W</text>
+                <text x="112" y="63" font-size="9" font-family="JetBrains Mono" fill="currentColor">E</text>
+              </svg>
+              <div class="stamp-name">旅智<br><em style="font-style: italic;">TripAI</em></div>
+            </div>
+            <div class="stamp-bottom">
+              <div>
+                <div>TO 广安</div>
+                <div style="margin-top: 4px;">3 DAYS · 松弛版</div>
+              </div>
+              <div class="stamp-barcode">
+                <span style="height: 80%"></span><span style="height: 50%"></span><span style="height: 100%"></span><span style="height: 60%"></span><span style="height: 90%"></span><span style="height: 40%"></span><span style="height: 70%"></span><span style="height: 100%"></span><span style="height: 55%"></span><span style="height: 85%"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="postmark">
+          <span>AI POWERED</span>
+          <span class="postmark-big">AI</span>
+          <span>TRIP · 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 1. 创意介绍 -->
+<section id="intro">
+  <div class="container">
+    <div class="intro-grid">
+      <aside class="intro-side">
+        <div class="intro-label">SECTION 01 · 创意介绍</div>
+        <h2 class="intro-name">旅智 TripAI</h2>
+        <p class="intro-tagline">"把旅行的决策交给 AI，把风景留给你自己。"</p>
+        <span class="intro-pill"><span class="intro-pill-dot"></span> 生活方式赛道</span>
+      </aside>
+      <div class="intro-body">
+        <p class="lead">
+          <em>旅智 TripAI</em> 是一个 AI 驱动的智能旅行规划平台。你在控制台提交一次旅行意图，AI 为你生成紧凑或松弛的行程；旅途中天气、人流、交通的任何变化，都会触发实时预警与备选方案；社区用户的真实反馈持续回流模型，让下一次推荐更懂你。
+        </p>
+        <p>
+          <strong>想解决什么问题：</strong>旅行者花大量时间在小红书、马蜂窝、Google Maps 之间反复横跳——查景点、排路线、算时间、订餐厅。好不容易定好的计划，一到现场全乱：突降暴雨、景点排队两小时、餐厅关门、交通延误。规划难、变化多、信息滞后，是旅行三大顽疾。
+        </p>
+        <div class="intro-quote">
+          <p>在一次去杭州的旅行中，早上 9 点到断桥发现人山人海，临时改去苏堤却找不到附近吃饭的地方，下午又突降阵雨打乱了所有户外安排。我问自己：能不能让 AI 像本地朋友那样，提前告诉我什么时候去哪、下雨怎么办、人多了去哪？</p>
+          <cite>— 项目发起人的真实经历</cite>
+        </div>
+        <p>
+          <strong>大概是什么产品：</strong>Web 控制台 + 桌面应用 + REST API，前后端分离架构。前端 Next.js + React + Framer Motion，后端 Supabase + 高德地图 API + 多 LLM 接入（OpenAI 兼容协议）。AI 生成行程，Supabase Realtime 推送预警，高德提供周边搜索与地理围栏。
+        </p>
+        <p>
+          <strong>一句话概括：</strong>旅智 TripAI 不是一个行程生成器，而是一个会"陪你看天气、躲人流、找厕所"的 AI 旅行管家。规划只是起点，陪伴全程才是核心。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 目标用户及痛点 -->
+<section class="pain-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-num">SECTION 02 · 目标用户及痛点</div>
+      <h2 class="section-title">三层减负，把<em>规划、应变、决策</em>交给 AI</h2>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <div class="pain-card-num">01</div>
+        <div class="pain-card-layer">规划层 · Planning</div>
+        <h3 class="pain-card-title">查资料排路线，三天三夜</h3>
+        <div class="pain-compare">
+          <div class="pain-row">
+            <span class="pain-row-tag pain-row-before">以前</span>
+            <span class="pain-row-text">小红书、马蜂窝、Google Maps 反复横跳，3 天只排出 1 个草案</span>
+          </div>
+          <div class="pain-row">
+            <span class="pain-row-tag pain-row-after">现在</span>
+            <span class="pain-row-text">输入目的地+天数+偏好，AI 30 秒生成可执行行程，紧凑/松弛任选</span>
+          </div>
+        </div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-card-num">02</div>
+        <div class="pain-card-layer">应变层 · Realtime</div>
+        <h3 class="pain-card-title">计划赶不上变化</h3>
+        <div class="pain-compare">
+          <div class="pain-row">
+            <span class="pain-row-tag pain-row-before">以前</span>
+            <span class="pain-row-text">突降暴雨、景点排队 2 小时，现场手忙脚乱查替代方案</span>
+          </div>
+          <div class="pain-row">
+            <span class="pain-row-tag pain-row-after">现在</span>
+            <span class="pain-row-text">天气/人流/交通实时预警，AI 推荐备选方案，一键采纳替换节点</span>
+          </div>
+        </div>
+      </div>
+      <div class="pain-card reveal">
+        <div class="pain-card-num">03</div>
+        <div class="pain-card-layer">决策层 · Companion</div>
+        <h3 class="pain-card-title">午餐吃什么，厕所哪里有</h3>
+        <div class="pain-compare">
+          <div class="pain-row">
+            <span class="pain-row-tag pain-row-before">以前</span>
+            <span class="pain-row-text">景点门口随便进一家被宰，找不到厕所憋一路</span>
+          </div>
+          <div class="pain-row">
+            <span class="pain-row-tag pain-row-after">现在</span>
+            <span class="pain-row-text">高德扫街榜推荐餐厅、最近公共厕所、AI 休息点推荐，全程陪伴</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pain-note reveal">
+      <div class="pain-note-icon">!</div>
+      <div class="pain-note-text">
+        <strong>但它不是又一个行程生成器。</strong>传统工具只解决"规划层"——给你一份 PDF 就结束了。旅智 TripAI 的核心是<strong>实时应变层</strong>：基于 Supabase Realtime 推送 + 多源数据交叉验证（天气 API + 高德人流 + UGC 上报），让行程在旅途中持续进化。规划只是起点，陪伴全程才是差异。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 价值与意义 -->
+<section class="value-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-num">SECTION 03 · 价值与意义</div>
+      <h2 class="section-title">让每一次旅行，都<em>完美无憾</em></h2>
+    </div>
+    <div class="value-stats">
+      <div class="stat-card reveal">
+        <div class="stat-num">70<span class="stat-unit">%</span></div>
+        <div class="stat-label">规划时间缩减</div>
+        <div class="stat-desc">从 3 天查资料缩到 30 秒生成，AI 做掉 70% 的机械劳动</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num">3<span class="stat-unit">层</span></div>
+        <div class="stat-label">实时预警维度</div>
+        <div class="stat-desc">天气、人流、交通三源交叉验证，置信度 ≥ 0.7 才推送</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num">∞<span class="stat-unit"></span></div>
+        <div class="stat-label">社区数据回流</div>
+        <div class="stat-desc">UGC 上报 + 地理围栏验证，模型越用越懂真实世界</div>
+      </div>
+    </div>
+    <div class="value-body">
+      <div class="value-block reveal">
+        <h3>
+          <span class="v-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+          </span>
+          效率提升
+        </h3>
+        <p>三个层面同时减负——<strong>规划层</strong>不用 3 天查资料，AI 30 秒生成；<strong>应变层</strong>不用现场手忙脚乱，实时预警 + 备选方案一键采纳；<strong>决策层</strong>不用纠结吃什么去哪歇，高德扫街榜 + AI 休息点推荐全程陪伴。旅行从"人查机器"变成"机器陪人"。</p>
+      </div>
+      <div class="value-block reveal">
+        <h3>
+          <span class="v-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </span>
+          商业想象力
+        </h3>
+        <p>旅行规划只是第一个用例，<strong>AI 陪伴引擎</strong>才是底子。这套"意图理解 + 实时应变 + 社区回流"的能力不绑定旅行领域——未来可延伸到本地生活（周末去哪）、商务出行（会议行程）、研学旅行（教育路线）。相比纯工具的窄赛道，AI 陪伴引擎的市场天花板高一个数量级。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 核心能力矩阵 -->
+<section id="features" class="feat-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-num">SECTION 04 · 核心能力</div>
+      <h2 class="section-title">六项能力，<em>全程陪伴</em></h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat feat-large reveal">
+        <span class="feat-tag">CORE</span>
+        <div class="feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </div>
+        <h3 class="feat-title">AI 行程生成</h3>
+        <p class="feat-desc">输入目的地、天数、人数、风格（紧凑/松弛），AI 一键生成可执行行程。支持拖拽调整、节点增删、时间冲突自动检测。生成的不只是地点列表，而是带交通方式、停留时长、备选方案的完整时间轴。</p>
+      </div>
+      <div class="feat feat-small reveal">
+        <span class="feat-tag">REALTIME</span>
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 8.84 8.56 21.18a4.25 4.25 0 1 1-6-6L14.91 2.84a2.83 2.83 0 1 1 4 4L6.41 19.34a1.42 1.42 0 1 1-2-2L15.91 5.84"/></svg>
+        </div>
+        <h3 class="feat-title">实时预警 + 备选方案</h3>
+        <p class="feat-desc">天气、人流、交通三源交叉验证，置信度 ≥ 0.7 推送预警。每个预警附 AI 建议 + 备选方案，一键采纳替换原节点。</p>
+      </div>
+      <div class="feat feat-third reveal">
+        <span class="feat-tag">AI TIP</span>
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="feat-title">AI 关心小贴士</h3>
+        <p class="feat-desc">忽略预警后，AI 根据预警内容生成 15 字出行小贴士，写入对应行程节点。施工灰尘→"佩戴口罩防护呼吸道"。</p>
+      </div>
+      <div class="feat feat-third reveal">
+        <span class="feat-tag">MAP</span>
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <h3 class="feat-title">高德周边搜索</h3>
+        <p class="feat-desc">餐厅按餐品类型筛选（川菜/火锅/日料），公共厕所按距离排序，AI 推荐休息点（咖啡馆/商场/公园）。</p>
+      </div>
+      <div class="feat feat-third reveal">
+        <span class="feat-tag">VISUAL</span>
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+        </div>
+        <h3 class="feat-title">天气背景动画</h3>
+        <p class="feat-desc">根据实时天气动态渲染整个头部卡片背景：晴天太阳光环旋转、雨天雨滴下落、雪天雪花飘落。纯 CSS GPU 加速。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA 区 -->
+<section class="cta">
+  <div class="container cta-inner">
+    <div class="cta-mark">— THE JOURNEY BEGINS —</div>
+    <h2 class="cta-title">开始你的 <em>智能旅行</em></h2>
+    <p class="cta-sub">加入旅智 TripAI，让 AI 成为你的旅行管家。规划只是起点，陪伴全程才是核心。</p>
+    <a href="#" class="cta-btn">
+      免费体验
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-text">© 2026 旅智 TRIPAI · 生活方式赛道参赛作品</div>
+    <div class="footer-text">AI POWERED · NEXT.JS · SUPABASE · 高德地图</div>
+  </div>
+</footer>
+
+<script>
+  // 滚动渐显动画
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('in'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // 数字滚动动画
+  const numbers = document.querySelectorAll('.stat-num');
+  const numObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const text = el.textContent;
+        const match = text.match(/(\d+)/);
+        if (match) {
+          const target = parseInt(match[1]);
+          const suffix = text.replace(match[1], '');
+          let current = 0;
+          const step = Math.max(1, Math.ceil(target / 30));
+          const tick = () => {
+            current = Math.min(target, current + step);
+            el.innerHTML = current + suffix.replace(/<span/g, '<span');
+            if (current < target) requestAnimationFrame(tick);
+          };
+          tick();
+        }
+        numObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  numbers.forEach(n => numObserver.observe(n));
+</script>
+
+</body>
+</html>
