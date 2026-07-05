@@ -1,8 +1,6 @@
 packages:
   - "apps/*"
   - "packages/*"
-onlyBuiltDependencies:
-  - core-js
-  - core-js-pure
-  - es5-ext
-  - esbuild
+allowBuilds:
+  core-js: true
+  esbuild: true
